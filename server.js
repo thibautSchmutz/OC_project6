@@ -10,8 +10,8 @@ dotenv.config({ path: "./config/config.env" });
 connectDB();
 
 // Liens vers les différentes routes
-// const bootcamps = require('./routes/bootcamps');
-// const courses = require('./routes/courses');
+const sauce = require("./routes/sauce");
+// const auth = require("./routes/auth");
 
 // Création de l'application à partir d'express
 const app = express();
@@ -21,6 +21,10 @@ app.use(express.json());
 
 // Log des requêtes
 app.use(morgan("dev"));
+
+// Redirection vers les routes
+app.use("/api/sauces", sauce);
+// app.use("/api/auth", auth);
 
 // Lancement du serveur
 const PORT = process.env.PORT || 5000;
