@@ -1,7 +1,7 @@
 const express = require("express");
 
 // Importation des middlewares
-const authentication = require("../middlewares/authentication");
+const auth = require("../middlewares/auth");
 // Importation des méthodes du Controller
 const {
   getAllSauces,
@@ -16,16 +16,13 @@ const {
 const router = express.Router();
 
 // Assignation des routes
-router
-  .route("/")
-  .get(authentication, getAllSauces)
-  .post(authentication, createSauce);
+router.route("/").get(auth, getAllSauces).post(auth, createSauce);
 router
   .route("/:id")
-  .get(authentication, getOneSauce)
-  .put(authentication, updateSauce)
-  .delete(authentication, deleteSauce);
-router.route("/:id/like").post(authentication, updateLikes);
+  .get(auth, getOneSauce)
+  .put(auth, updateSauce)
+  .delete(auth, deleteSauce);
+router.route("/:id/like").post(auth, updateLikes);
 
 // Exportation du module
 module.exports = router;
