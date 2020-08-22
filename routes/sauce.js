@@ -16,18 +16,16 @@ const {
 const router = express.Router();
 
 // Assignation des routes
-
 router
   .route("/")
   .get(authentication, getAllSauces)
   .post(authentication, createSauce);
-
 router
   .route("/:id")
   .get(authentication, getOneSauce)
   .put(authentication, updateSauce)
   .delete(authentication, deleteSauce);
-
 router.route("/:id/like").post(authentication, updateLikes);
 
+// Exportation du module
 module.exports = router;

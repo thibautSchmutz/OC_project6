@@ -36,7 +36,7 @@ exports.updateSauce = (req, res, next) => {
 };
 
 // @desc      Supprimer une sauce
-// @route     DELETE /api/v1/bootcamps/:id
+// @route     DELETE /api/sauces/:id
 // @access    Private (auth + owner)
 exports.deleteSauce = (req, res, next) => {
   id = req.params.id;
@@ -44,9 +44,16 @@ exports.deleteSauce = (req, res, next) => {
   res.send(`Sauce ${req.body.name} supprimée`);
 };
 
-// @desc      Delete bootcamp
-// @route     DELETE /api/v1/bootcamps/:id
-// @access    Private
+// @desc      Ajouter un like ou un dislike sur une sauce
+// @route     POST /api/sauces/:id/like
+// @access    (auth)
 exports.updateLikes = (req, res, next) => {
-  console.log("updateLikes");
+  const user = req.body.user;
+  const id = req.params.id;
+
+  req.body.like === 1
+    ? res.send(`${user} a liké la sauce ${id}`)
+    : res.send(`${user} a disliké la sauce ${id}`);
+
+  console.log(`Action de like sur la sauce ${id}`);
 };
