@@ -2,6 +2,7 @@ const express = require("express");
 
 // Importation des middlewares
 const auth = require("../middlewares/auth");
+const multer = require("../middlewares/multer-config");
 // Importation des méthodes du Controller
 const {
   getAllSauces,
@@ -16,11 +17,11 @@ const {
 const router = express.Router();
 
 // Assignation des routes
-router.route("/").get(auth, getAllSauces).post(auth, createSauce);
+router.route("/").get(auth, getAllSauces).post(auth, multer, createSauce);
 router
   .route("/:id")
   .get(auth, getOneSauce)
-  .put(auth, updateSauce)
+  .put(auth, multer, updateSauce)
   .delete(auth, deleteSauce);
 router.route("/:id/like").post(auth, updateLikes);
 

@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const morgan = require("morgan");
 const colors = require("colors");
+const bodyParser = require("body-parser");
+const path = require("path");
 
 dotenv.config({ path: "./config/config.env" });
 
@@ -15,6 +17,9 @@ const userRoutes = require("./routes/user");
 
 // Création de l'application à partir d'express
 const app = express();
+
+// Lecture du format JSON des requêtes entrantes
+app.use(express.json());
 
 // Gestion des CORS
 app.use((req, res, next) => {
@@ -32,11 +37,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Lecture du format JSON des requêtes entrantes
-app.use(express.json());
-
 // Log des requêtes
 app.use(morgan("dev"));
+
+// Création d'un dossier statique pour importer des images du front et les renvoyer au front
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Redirection vers les routes
 app.use("/api/sauces", sauceRoutes);
