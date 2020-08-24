@@ -35,7 +35,7 @@ exports.createSauce = (req, res, next) => {
 
   const sauce = new Sauce({
     ...sauceObject,
-    userId: req.customUserID,
+    userId: sauceObject.userId,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
@@ -69,10 +69,10 @@ exports.updateSauce = (req, res, next) => {
     { _id: req.params.id },
     { ...sauceObject, _id: req.params.id }
   )
-    .then(() => res.status(200).json({ message: "Sauce modifiée" }))
+    .then(() =>
+      res.status(200).json({ message: `Sauce ${sauceObject.name} modifiée` })
+    )
     .catch((error) => res.status(400).json({ error }));
-
-  console.log(`updateSauce de la sauce à l'id : ${req.params.id}`);
 };
 
 // @desc      Supprimer une sauce
@@ -95,12 +95,36 @@ exports.deleteSauce = (req, res, next) => {
 // @route     POST /api/sauces/:id/like
 // @access    (auth)
 exports.updateLikes = (req, res, next) => {
-  const user = req.body.user;
-  const id = req.params.id;
+  const userId = req.body.userId;
+  const like = req.body.like; // peut être : 1, -1 ou 0
 
-  req.body.like === 1
-    ? res.send(`${user} a liké la sauce ${id}`)
-    : res.send(`${user} a disliké la sauce ${id}`);
-
-  console.log(`Action de like sur la sauce ${id}`);
+  // Récupérer l'objet de la BDD
+  Sauce.findById(req.params.id)
+    .then((sauce) => {
+      if (like === 1) {
+        sauce.usersLiked.push(userId);
+        sauce.likes = sauce.usersLiked.length;
+      } else if (like === -1) {
+        sauce.usersDisliked.push(userId);
+        sauce.dislikes = sauce.usersDisliked.length;
+      } else {
+        // like === 0
+        if (sauce.usersLiked.includes(userId)) {
+          sauce.usersLiked.filter((user) => user !== userId);
+          sauce.likes = sauce.usersLiked.length;
+        } else if (sauce.usersDisliked.includes(userId)) {
+          sauce.usersDisliked.filter((user) => user !== userId);
+          sauce.dislikes = sauce.usersDisliked.length;
+        }
+      }
+      // Enregistrer les modifications dans le BDD
+      Sauce.findByIdAndUpdate(req.params.id, { ...sauce })
+        .then(() =>
+          res
+            .status(203)
+            .json({ message: "Action de sur les likes enregistrée" })
+        )
+        .catch((error) => res.status(400).json({ error }));
+    })
+    .catch((error) => res.status(400).json({ error }));
 };
