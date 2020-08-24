@@ -6,7 +6,7 @@ const colors = require("colors");
 const bodyParser = require("body-parser");
 const path = require("path");
 
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({ path: "./config/srt.env" });
 
 // Connexion à la base de données
 connectDB();
