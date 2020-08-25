@@ -4,7 +4,8 @@
   "description": "api pour application gastronomique",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "PROD_MODE=production node server",
+    "dev": "nodemon server"
   },
   "author": "Thibaut Schmutz",
   "license": "ISC",
