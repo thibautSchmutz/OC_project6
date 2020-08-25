@@ -6,6 +6,7 @@ const colors = require("colors");
 const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
+const cors = require("cors");
 
 dotenv.config({ path: "./config/srt.env" });
 
@@ -28,21 +29,8 @@ app.use(helmet());
 // Lecture du format JSON des requêtes entrantes
 app.use(express.json());
 
-// Gestion des CORS
-app.use((req, res, next) => {
-  //Accepter n'importe quel origine
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
-  res.setHeader("Content-Security-Policy", "default-src 'self'");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  next();
-});
+// Gestion des CORS (ouvert sur toutes les routes)
+app.use(cors());
 
 // Log des requêtes
 app.use(morgan("dev"));
