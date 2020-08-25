@@ -3,9 +3,9 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const morgan = require("morgan");
 const colors = require("colors");
-const bodyParser = require("body-parser");
 const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 
 dotenv.config({ path: "./config/srt.env" });
 
@@ -19,8 +19,11 @@ const userRoutes = require("./routes/user");
 // Création de l'application à partir d'express
 const app = express();
 
-// Sanitize
+// Sanitize inputs pour Mongo
 app.use(mongoSanitize());
+
+// Ajout des paramètres de securités au headers des responses (contient une méthode xssFilter()).
+app.use(helmet());
 
 // Lecture du format JSON des requêtes entrantes
 app.use(express.json());
