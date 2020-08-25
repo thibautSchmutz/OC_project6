@@ -52,7 +52,7 @@ exports.createSauce = (req, res, next) => {
 
 // @desc      Modifier une sauce
 // @route     PUT /api/sauces/:id
-// @access    Private (auth + owner)
+// @access    Private (auth + owner(front))
 exports.updateSauce = (req, res, next) => {
   // Extraction de body de la requête en fonction de la présence d'une image ou non.
   const sauceObject = req.file
@@ -77,7 +77,7 @@ exports.updateSauce = (req, res, next) => {
 
 // @desc      Supprimer une sauce
 // @route     DELETE /api/sauces/:id
-// @access    Private (auth + owner)
+// @access    Private (auth + owner(front))
 exports.deleteSauce = (req, res, next) => {
   Sauce.findById(req.params.id)
     .then((sauce) => {

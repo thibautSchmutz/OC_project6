@@ -19,8 +19,8 @@ const connectDB = async () => {
   const nodeMode = process.env.PROD_MODE ? "production" : "developpement";
 
   console.log(
-    `MongoDB connecté: ${conn.connection.host} en mode ${nodeMode}`.bgGreen
-      .black.bold
+    `MongoDB connecté: ${conn.connection.host} en mode ${nodeMode.bgWhite.red.bold}`
+      .bgGreen.black.bold
   );
 };
 

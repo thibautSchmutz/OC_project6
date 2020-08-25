@@ -2,14 +2,12 @@ const express = require("express");
 const nocache = require("nocache");
 
 // Importation de middleware
-const rateLimiter = require("../utils/rateLimit");
+const cache = nocache();
 const passwordCheck = require("../middlewares/passwordCheck");
+const rateLimiter = require("../utils/rateLimit");
 
 // Importation des méthodes du controller
 const { signup, login } = require("../controllers/user");
-
-// Instanciation du middleware nocache
-const cache = nocache();
 
 // Déclaration du router express
 const router = express.Router();
