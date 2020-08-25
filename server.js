@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const colors = require("colors");
 const bodyParser = require("body-parser");
 const path = require("path");
+const mongoSanitize = require("express-mongo-sanitize");
 
 dotenv.config({ path: "./config/srt.env" });
 
@@ -17,6 +18,9 @@ const userRoutes = require("./routes/user");
 
 // Création de l'application à partir d'express
 const app = express();
+
+// Sanitize
+app.use(mongoSanitize());
 
 // Lecture du format JSON des requêtes entrantes
 app.use(express.json());
