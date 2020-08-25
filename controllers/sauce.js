@@ -95,36 +95,79 @@ exports.deleteSauce = (req, res, next) => {
 // @route     POST /api/sauces/:id/like
 // @access    (auth)
 exports.updateLikes = (req, res, next) => {
+  const sauceId = req.params.id;
   const userId = req.body.userId;
-  const like = req.body.like; // peut être : 1, -1 ou 0
+  const like = req.body.like;
 
-  // Récupérer l'objet de la BDD
-  Sauce.findById(req.params.id)
+  Sauce.findOne({ _id: sauceId })
     .then((sauce) => {
-      if (like === 1) {
-        sauce.usersLiked.push(userId);
-        sauce.likes = sauce.usersLiked.length;
-      } else if (like === -1) {
-        sauce.usersDisliked.push(userId);
-        sauce.dislikes = sauce.usersDisliked.length;
-      } else {
-        // like === 0
-        if (sauce.usersLiked.includes(userId)) {
-          sauce.usersLiked.filter((user) => user !== userId);
-          sauce.likes = sauce.usersLiked.length;
-        } else if (sauce.usersDisliked.includes(userId)) {
-          sauce.usersDisliked.filter((user) => user !== userId);
-          sauce.dislikes = sauce.usersDisliked.length;
-        }
+      switch (like) {
+        case 1:
+          Sauce.updateOne(
+            { _id: sauceId },
+            {
+              $inc: { likes: +1 },
+              $push: { usersLiked: userId },
+            }
+          )
+            .then(() => {
+              res.status(200).json({
+                message: `Un like a été ajouté à la sauce ${sauce.name}`,
+              });
+            })
+            .catch((error) => res.status(400).json({ error }));
+          break;
+        case 0:
+          if (sauce.usersLiked.includes(userId)) {
+            Sauce.updateOne(
+              { _id: sauceId },
+              {
+                $inc: { likes: -1 },
+                $pull: { usersLiked: userId },
+              }
+            )
+              .then(() => {
+                res.status(200).json({
+                  message: `Un like a été retiré de la sauce ${sauce.name}`,
+                });
+              })
+              .catch((error) => res.status(400).json({ error }));
+          } else if (sauce.usersDisliked.includes(userId)) {
+            Sauce.updateOne(
+              { _id: sauceId },
+              {
+                $inc: { dislikes: -1 },
+                $pull: { usersDisliked: userId },
+              }
+            )
+              .then(() => {
+                res.status(200).json({
+                  message: `Un dislike a été retiré de la sauce ${sauce.name}`,
+                });
+              })
+              .catch((error) => res.status(400).json({ error }));
+          }
+          break;
+        case -1:
+          Sauce.updateOne(
+            { _id: sauceId },
+            {
+              $inc: { dislikes: +1 },
+              $push: { usersDisliked: userId },
+            }
+          )
+            .then(() => {
+              res.status(200).json({
+                message: `Un dislike a été ajouté de la sauce ${sauce.name}`,
+              });
+            })
+            .catch((error) => res.status(400).json({ error }));
+          break;
+        default:
+          throw "Bad Request : Aucune action n'a été enregistrée sur les likes/dislikes";
       }
-      // Enregistrer les modifications dans le BDD
-      Sauce.findByIdAndUpdate(req.params.id, { ...sauce })
-        .then(() =>
-          res
-            .status(203)
-            .json({ message: "Action de sur les likes enregistrée" })
-        )
-        .catch((error) => res.status(400).json({ error }));
     })
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => {
+      res.status(404).json({ error });
+    });
 };
