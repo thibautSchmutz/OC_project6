@@ -3,6 +3,7 @@ const nocache = require("nocache");
 
 // Importation de middleware
 const rateLimiter = require("../utils/rateLimit");
+const passwordCheck = require("../middlewares/passwordCheck");
 
 // Importation des méthodes du controller
 const { signup, login } = require("../controllers/user");
@@ -14,7 +15,7 @@ const cache = nocache();
 const router = express.Router();
 
 // Assignation des routes
-router.post("/signup", cache, rateLimiter, signup);
+router.post("/signup", cache, passwordCheck, signup);
 router.post("/login", cache, rateLimiter, login);
 
 // Exportation du module
